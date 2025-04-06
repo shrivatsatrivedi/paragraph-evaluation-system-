@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Essay Grading System</title>
+</head>
+<body>
+    <h2>Automated Essay Grading</h2>
+    <textarea id="essay" rows="10" cols="50" placeholder="Enter your essay here..."></textarea>
+    <br>
+    <button onclick="gradeEssay()">Grade Essay</button>
+    <h3>Predicted Score: <span id="score"></span></h3>
+
+    <script>
+        function gradeEssay() {
+            let essayText = document.getElementById("essay").value;
+            fetch("http://127.0.0.1:5000/predict", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                mode: "cors", // Fix CORS issue
+                body: JSON.stringify({"essay": essayText})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.predicted_score !== undefined) {
+                    document.getElementById("score").innerText = data.predicted_score;
+                } else {
+                    document.getElementById("score").innerText = "Error in grading!";
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        }
+    </script>
+</body>
+</html>
